@@ -1,10 +1,10 @@
 body {
   margin:0;
-  font-family:  , Helvetica, sans-serif, sans-serif;
+  font-family: Helvetica, sans-serif, sans-serif;
   text-align: center;
-  background-size: cover;
+  background-size:cover;
   background-position: center;
-  background-color:
+  
 }
 
 header {
@@ -24,7 +24,7 @@ header {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-   margin-img :30px;
+   margin:30px;
 }
 
 
