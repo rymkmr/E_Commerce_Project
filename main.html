@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> goldon nova </title>
+  <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+  
+  <header class="header">
+    <img src="6005724088388750382.jpg" class="circle-img">
+    <h1><i>Golden nova</i></h1>
+  </header>
+
+  
+  <nav>
+    <a href="main.html">Home</a>
+    <a href="electronics.html">Electronics</a>
+    <a href="clothing.html">Clothing</a>
+    <a href="books.html">Books</a>
+    <a href="#">Cart</a>
+  </nav>
+
+  
+  <main class="categories">
+
+    <article class="card">
+      <a href="electronics.html">
+        <img src="6005724088388750390.jpg" alt="Electronics">
+        <h2>Electronics</h2>
+        <p>Discover the latest electronic devices</p>
+      </a>
+    </article>
+
+    <article class="card">
+      <a href="clothing.html">
+        <img src="6005729710500940835.jpg" alt="Clothing">
+        <h2>Clothing</h2>
+        <p>Explore our fashion collection</p>
+      </a>
+    </article>
+
+    <article class="card">
+      <a href="books.html">
+        <img src="6005729710500940836.jpg" width="160px" alt="Books">
+        <h2>Books</h2>
+        <p>Find your favorite books</p>
+      </a>
+    </article>
+
+  </main>
+  
+
+  
+   <footer>
+    <p onclick="showstudent()" style="cursor:pointer; color:rgb(18, 18, 19);">
+    📧 goldonnova2026@email.com
+  </p>
+
+  <p id="result"></p>
+  </footer>
+  
+
+<script>
+function showstudent() {
+  let name = prompt("Enter student name:");
+
+  if(!name) return;
+
+  name = name.toLowerCase();
+
+  let students = {
+    "hana":  { email: "hano@email.com", group: "5" },
+    "rym":  { email: "reeym@email.com", group: "5" },
+    "sanaa": { email: "sanaa@email.com", group: "5" },
+    "maroua": { email: "maraoua@email.com", group: "5" },
+  };
+
+  if(students[name]) {
+    alert(
+      "Name: " + name +
+      "\nEmail: " + students[name].email +
+      "\nGroup: " + students[name].group
+    );
+  } else {
+    alert("Student not found ");
+  }
+}
+</script>
+</body>
+</html>
