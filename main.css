@@ -1,31 +1,30 @@
 body {
   margin:0;
-  font-family: Helvetica, sans-serif, sans-serif;
+  font-family: Helvetica,  sans-serif;
   text-align: center;
   background-size:cover;
   background-position: center;
   
 }
 
+
+
+
 header {
-  background: #f7d4e3;
-  color: rgb(55, 54, 54);
-  padding: 15px;
+  background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
+              url("backround header.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 170px;
+  color: white;
+  padding: 30px;
   display: flex;
   align-items: center;
   gap: 15px;
   justify-content: center;
-
 }
 
-.circle-img {
-
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-   margin:30px;
-}
 
 
 
@@ -34,41 +33,34 @@ main{
     min-height: 50vh;
 }   
 
-h1{
-font-size: 48px;
-}
 
-.logo {
-  width: 50px;
-  position: absolute;
-  left: 10px;
-  top: 10px;
-}
+
+
 
 nav {
-  background: #363636;
+  background: #1d2a47;
   padding: 10px;
+
 }
 
 nav a {
-  color: rgb(242, 157, 197);
+  color: #f2d6b1f4;
   margin: 10px;
   text-decoration: none;
   font-weight: bold;
 }
 
-nav a:hover {
-  color: yellow;
-}
+
 
 .categories {
   display: flex;
   justify-content: center;
-  gap: 60px;
+  gap: 70px;
   padding: 30px;
 }
 
 .card {
+    background: linear-gradient(135deg, #66879c, #f2dec3);;
   width: 300px ;
   padding:20px;
   border-radius: 20px;
@@ -104,9 +96,58 @@ nav a:hover {
 
 
 
+
+.categories {
+    background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.1)),
+                url("backround categories.jpg");
+
+    background-size: cover;
+    background-position: center;
+    padding: 40px;
+    border-radius: 5px;
+}
+
 footer {
-  background: #f7d4e3;
+  background: #1d2a47;
   color: rgb(78, 74, 74);
   padding: 40px;
   font-size: 14px;
+  color: rgb(18,18,19);
+  text-align: center;
+}
+
+.link {
+  cursor: pointer;
+  color: rgb(251, 233, 184);
+  text-decoration: underline;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px gray;
+  z-index: 1000;
+  text-align: center;
+}
+
+.modal ul {
+  list-style: none;
+  padding: 0;
+}
+
+button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: none;
+  background: black;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
 }
