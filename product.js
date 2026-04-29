@@ -43,7 +43,7 @@
          name:"Red",
          mainImage:"photos/r1.jpg",
          thumbnails:[
-          "photos/r1.jpg",
+        
           "photos/r2.jpg",
          ],
          sizes:["S","M","L","XL"]
