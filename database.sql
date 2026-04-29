@@ -1,46 +1,74 @@
 CREATE DATABASE IF NOT EXISTS ecommerce_project;
 USE ecommerce_project;
-CREATE TABLE account (
-    login VARCHAR(100) PRIMARY KEY,
-    password VARCHAR(100) NOT NULL
-);
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS account;
+DROP TABLE IF EXISTS customer;
+DROP TABLE IF EXISTS product;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 CREATE TABLE customer (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    address VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(10) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE
 );
+
+CREATE TABLE account (
+    account_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL UNIQUE,
+    login VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE
+);
+
 CREATE TABLE product (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(150) NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     category VARCHAR(50) NOT NULL,
-    image VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL
+    image VARCHAR(255),
+    description TEXT
 );
+
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
-    order_date DATETIME NOT NULL,
+    order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total_price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES customer(customer_id),
-    FOREIGN KEY (product_id) REFERENCES product(product_id)
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE RESTRICT
 );
-INSERT INTO account (login, password) VALUES
-('rym@gmail.com', 'rym');
+
+CREATE TABLE order_items (
+    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    line_total DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE RESTRICT
+);
+
 INSERT INTO customer (name, address, phone_number, email) VALUES
-('rym', 'Algiers, Algeria', '0600000007', 'rym@gmail.com');
-/*INSERT INTO product (name, price, category, image, description) VALUES
-('product', , '', '', ''),
-.
-.
-.
-;*/
+('Rym', 'Algiers, Algeria', '0600000007', 'rym@gmail.com');
+
+INSERT INTO account (customer_id, login, password) VALUES
+(1, 'rym', '123456');
+
+INSERT INTO product (name, price, category, image, description) VALUES
+('MacBook Pro', 28000.00, 'Electronics', 'images/mac.jpg', 'High-performance laptop'),
+('HP Elite Dragonfly', 125000.00, 'Electronics', 'images/hp.jpg', 'Business laptop'),
+('Atomic Habits', 2200.00, 'Books', 'images/atomic .jpg', 'Self-development book'),
+('Burgundy Ruched Midi Dress', 4990.00, 'Clothing', 'images/red dress.jpg', 'Elegant burgundy dress');
+
 INSERT INTO orders (customer_id, product_id, quantity, order_date, total_price) VALUES
-(1, 1, 2, NOW(), 240000.00);
-
-
-
+(1, 1, 2, NOW(), 56000.00);
