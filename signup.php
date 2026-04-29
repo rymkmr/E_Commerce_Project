@@ -14,6 +14,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ){
         $msg="account create successfuly!";
         $class="success";
+        $customer = $conn->prepare("INSERT INTO customer (name, address, phone_number, email) VALUES (?, ?, ?, ?)");
+$address = "Not provided";
+$phone = "0000000000";
+$email = $user . "@example.com";
+$customer->bind_param("ssss", $user, $address, $phone, $email);
+$customer->execute();
+
+$customerId = $conn->insert_id;
+
+$account = $conn->prepare("INSERT INTO account (customer_id, login, password) VALUES (?, ?, ?)");
+$account->bind_param("iss", $customerId, $user, $pass);
+$account->execute();
+
         header("Location: index.php");
         exit();
     }else{
