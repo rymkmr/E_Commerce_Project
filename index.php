@@ -1,20 +1,28 @@
 
 <?php
+require_once "db.php";
 $msg="";
 $class="";
-if ($_SERVER["REQUEST_METHOD"] == "POST") {//check if the form is submitted using POST method
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $_POST['username'];
     $pass = $_POST['password'];
-    if(
-      
-      strlen($user)>=3 &&
-      strlen($pass)>=6 
 
-    ){
-        $msg="Login successful!";//save success message in msg variable
-        $class="success";
-        header("Location: main.html");//redirect to main.html if login is successful
+    $stmt = $conn->prepare("SELECT * FROM account WHERE login = ? AND password = ?");
+    $stmt->bind_param("ss", $user, $pass);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $msg = "Login successful!";
+        $class = "success";
+        header("Location: main.html");
         exit();
+    } else {
+        $msg = "Invalid username or password.";
+        $class = "error";
+    }
+
+
        
     }else {
         $msg="Invalid username or password.";//save error message in msg variable
