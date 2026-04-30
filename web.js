@@ -17,7 +17,7 @@
         productCard.classList.add("product-card");
         productCard.innerHTML=`
         <div class="img-box">
-             <img src="${product.colors[0].mainImage}">
+             <img src="${product.colors?.[0]?.mainImage|| 'default.jpg'}">
         </div>
         <h2 class="title">${product.title}</h2> 
         <span class ="price">${product.price}</span>
@@ -43,7 +43,7 @@ const sizeContainer=document.querySelector(".size-options");
 const addToCartBtn=document.querySelector("#cart");
 
 let selectedColor=productData.colors[0];
-let selectedSize=selectedColor.sizes[0];
+let selectedSize=selectedColor.sizes?.[0] || null;
 
 function updateProductDisplay(colorData) {
     if(!colorData.sizes.includes(selectedSize)){
@@ -86,7 +86,26 @@ productData.colors.forEach(color => {
 });
 
 sizeContainer.innerHTML = "";
-colorData.sizes.forEach(size => {
+ if (colorData.sizes && colorData.sizes.length > 0) {
+
+    sizeContainer.style.display = "block";
+
+    colorData.sizes.forEach(size => {
+        const btn = document.createElement("button");
+        btn.textContent = size;
+
+        sizeContainer.appendChild(btn);
+
+        btn.addEventListener("click", () => {
+            selectedSize = size;
+        });
+    });
+
+} else {
+    sizeContainer.style.display = "none";
+}
+
+ colorData.sizes.forEach(size => {
     const btn = document.createElement("button");
     btn.textContent = size;
     if (size === selectedSize) btn.classList.add("selected");
@@ -97,7 +116,8 @@ colorData.sizes.forEach(size => {
         document.querySelectorAll(".size-options button").forEach(el => el.classList.remove("selected"));
         btn.classList.add("selected");
         selectedSize = size;
-    });
+    
+   });
 });
 
 }
@@ -126,7 +146,7 @@ function addToCart(product, color, size) {
             price: product.price,
             image: color.mainImage,
             color: color.name,
-            size: size,
+            size: size|| "No Size",
             quantity: 1
         });
     }
@@ -154,7 +174,7 @@ function displayCart() {
     }
 let subtotal=0;
 cart.forEach((item, index) => {
-    const itemTotal = parseFloat(item.price.replace("$", "")) * item.quantity;
+    const itemTotal = parseFloat(item.price.replace("DZD", "")) * item.quantity;
     subtotal += itemTotal;
 
     const cartItem = document.createElement("div");
