@@ -3,7 +3,7 @@
 $msg="";
 $class="";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {//check if the form is submitted using POST method
-    $user = $_POST['username'];
+    $user = $_POST['email'];
     $pass = $_POST['password'];
     if(
       
@@ -38,8 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {//check if the form is submitted usin
         <h1>Login</h1>
          <form method="POST">
 
-           <label for="username">Username:</label>
-           <input type="text" id="username" name="username" placeholder="enter your name"><br><br>
+           <label for="email">Email:</label>
+           <input type="email" id="email" name="email" placeholder="enter your email"><br><br>
 
            <label for="password">Password:</label>
            <input type="password" id="password" name="password" placeholder="enter your password" required><br><br>

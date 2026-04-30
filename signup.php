@@ -34,10 +34,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body id="signup-page">
   <div id="signin-form"> 
-    <form id="signinForm" method="POST">
+    <form  method="POST">
         <h1>create account</h1>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" placeholder="enter your name"><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="enter your email"><br><br>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" placeholder="enter your phone number"><br><br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" placeholder="enter your address"><br><br>
+      <datalist id="addresses">
+           <option value="Adrar">
+           <option value="Chlef">
+           <option value="Laghouat">
+           <option value="Oum El Bouaghi">
+           <option value="Batna">
+           <option value="Béjaïa">
+           <option value="Biskra">
+           <option value="Béchar">
+           <option value="Blida">
+           <option value="Bouira">
+           <option value="Tamanrasset">
+           <option value="Tizi Ouzou">
+           <option value="Alger">
+           <option value="Boumérdès">
+           <option value="El Tarf">
+           <option value="Tindouf">
+           <option value="Tissemsilt">
+           <option value="El Oued">
+      </datalist> 
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="enter your password" required><br><br>
