@@ -1,75 +1,41 @@
 <?php
 session_start();
 
-$conn = new mysqli("localhost", "root", "", "ecommerce_projecct");
-
-if ($conn->connect_error) {
-    die("Connection failed: " .
-    $conn->connect_error);
-}
-
-$msg = "";
-$class = "";
+$error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email    = $_POST["email"];
+    $password = $_POST["password"];
+}
+if (strlen($email) < 3) {
+    $error = "Email must be at least 3 characters.";
+} elseif (strlen($password) < 6) {
+    $error = "Password must be at least 6 characters.";
+} else {
+    $conn = mysqli_connect("localhost", "root", "", "ecommerce_project");
 
-    $user = $_POST['email'];
-    $pass = $_POST['password'];
+    if (!$conn) {
+        $error = "Database connection failed.";
+    } else {
+        $email_safe = mysqli_real_escape_string($conn, $email);
+        $password_safe = mysqli_real_escape_string($conn, $password);
 
-    if (strlen($user) >= 3 && strlen($pass) >= 6) {
+        $sql = "SELECT * FROM account 
+                WHERE login = '$email_safe' 
+                AND password = '$password_safe'";
+        
+        $result = mysqli_query($conn, $sql);
 
-        $sql = "SELECT * FROM customer WHERE email='$user'";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            $_SESSION["email"] = $user;
+        if ($result && mysqli_num_rows($result) > 0) {
+            $_SESSION["email"] = $email;
+            mysqli_close($conn);
             header("Location: main.html");
             exit();
         } else {
-            $msg = "You dont have an account, please sign up!";
-            $class = "error";
+            $error = "Invalid email or password.";
         }
 
-    } else {
-        $msg = "Please enter valid email and password!";
-        $class = "error";
+        mysqli_close($conn);
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .error { color: red; }
-        .success { color: green; }
-    </style>
-</head>
-<body>
-
-<div id="login-form">
-    <h1>Login</h1>
-
-    <form method="POST">
-        <label>Email:</label>
-        <input type="email" name="email" placeholder="enter your email" required><br><br>
-
-        <label>Password:</label>
-        <input type="password" name="password" placeholder="enter your password" required><br><br>
-
-        <button type="submit">Login</button>
-    </form>
-
-    <?php if (!empty($msg)) { ?>
-        <p class="<?php echo $class; ?>"><?php echo $msg; ?></p>
-    <?php } ?>
-
-    <p>Don't have an account? <a href="signup.php">Sign up</a>.</p>
-</div>
-
-</body>
-</html>

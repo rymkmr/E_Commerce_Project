@@ -1,85 +1,48 @@
 <?php
-// Connect to database
-require_once __DIR__ . "/php/db.php";
-
-// Start session to identify logged-in user
 session_start();
 
-// Only allow POST requests (coming from fetch/AJAX)
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405);
-    echo json_encode(["error" => "Invalid request"]);
-    exit();
+$error = "";
+$success = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST["username"];
+    $address  = $_POST["address"];
+    $phone    = $_POST["phone"];
+    $email    = $_POST["email"];
+    $password = $_POST["password"];
+
+    $conn = mysqli_connect("localhost", "root", "", "ecommerce_project");
+
+    if (!$conn) {
+        $error = "Database connection failed.";
+    } else {
+        $username_safe = mysqli_real_escape_string($conn, $username);
+        $address_safe  = mysqli_real_escape_string($conn, $address);
+        $phone_safe    = mysqli_real_escape_string($conn, $phone);
+        $email_safe    = mysqli_real_escape_string($conn, $email);
+        $password_safe = mysqli_real_escape_string($conn, $password);
+
+        $check = mysqli_query($conn, "SELECT email FROM customer WHERE email = '$email_safe'");
+
+        if ($check && mysqli_num_rows($check) > 0) {
+            $error = "Email already registered.";
+        } else {
+            $sql1 = "INSERT INTO customer (name, address, phone_number, email)
+                     VALUES ('$username_safe', '$address_safe', '$phone_safe', '$email_safe')";
+
+            $sql2 = "INSERT INTO account (login, password)
+                     VALUES ('$email_safe', '$password_safe')";
+
+            if (mysqli_query($conn, $sql1) && mysqli_query($conn, $sql2)) {
+                mysqli_close($conn);
+                header("Location: index.php");
+                exit();
+            } else {
+                $error = "Registration failed. Please try again.";
+            }
+        }
+
+        mysqli_close($conn);
+    }
 }
-
-// Read JSON input from JavaScript
-$data = json_decode(file_get_contents("php://input"), true);
-
-// Validate incoming data
-if (!isset($data["cart"]) || !is_array($data["cart"]) || count($data["cart"]) === 0) {
-    echo json_encode(["error" => "Cart is empty"]);
-    exit();
-}
-
-// Get logged-in user email from session
-$userEmail = $_SESSION["user"] ?? null;
-
-if (!$userEmail) {
-    echo json_encode(["error" => "User not logged in"]);
-    exit();
-}
-
-// ==============================
-// 1. GET CUSTOMER ID
-// ==============================
-$stmt = $conn->prepare("SELECT customer_id FROM customer WHERE email = ?");
-$stmt->bind_param("s", $userEmail);
-$stmt->execute();
-$result = $stmt->get_result();
-$customer = $result->fetch_assoc();
-
-if (!$customer) {
-    echo json_encode(["error" => "Customer not found"]);
-    exit();
-}
-
-$customer_id = $customer["customer_id"];
-
-// ==============================
-// 2. INSERT ORDER
-// ==============================
-$total_price = 0;
-
-// Calculate total first
-foreach ($data["cart"] as $item) {
-    $price = floatval(preg_replace('/[^\d.]/', '', $item["price"]));
-    $qty = intval($item["quantity"]);
-    $total_price += $price * $qty;
-}
-
-// Insert into orders table
-$stmt = $conn->prepare("INSERT INTO orders (customer_id, product_id, quantity, order_date, total_price) VALUES (?, ?, ?, NOW(), ?)");
-    
-// ==============================
-// 3. INSERT EACH CART ITEM
-// ==============================
-foreach ($data["cart"] as $item) {
-
-    $product_id = $item["id"]; // must match DB ids like electronics-001
-    $quantity = intval($item["quantity"]);
-    $price = floatval(preg_replace('/[^\d.]/', '', $item["price"]));
-    $row_total = $price * $quantity;
-
-    $stmt->bind_param("isid", $customer_id, $product_id, $quantity, $row_total);
-    $stmt->execute();
-}
-
-// ==============================
-// SUCCESS RESPONSE
-// ==============================
-echo json_encode([
-    "success" => true,
-    "message" => "Order saved successfully"
-]);
-
 ?>
