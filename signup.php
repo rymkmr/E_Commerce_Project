@@ -1,41 +1,46 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "ecommerce_projecct");// Connect to the database
-if ($conn->connect_error) {
-    die("Connection failed: " .
-  $conn->connect_error);
+require_once __DIR__ . "/db_connect.php";
+
+$msg = "";
+$class = "";
+
+try {
+    $conn = get_db_connection();
+} catch (RuntimeException $e) {
+    http_response_code(503);
+    $msg = "Service temporarily unavailable. Please try again later.";
+    $class = "error";
+    $conn = null;
 }
-$msg="";
-$class="";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $msg="";
-    $user = $_POST['username'];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $conn) {
+    $user = trim($_POST['username'] ?? '');
+    $address = trim($_POST['address'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $email = trim($_POST['email'] ?? '');
 
-    $address = $_POST['address'];
-    $phone = $_POST['phone'];
-    $email = $_POST['email'];
-    if(
-    
-    
-       strlen($user)>=3 &&
-       
-       !empty($address) &&
-       !empty($phone) &&
-       !empty($email)
+    if (strlen($user) >= 3 && $address !== '' && $phone !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $stmt = $conn->prepare("INSERT INTO customer (`name`,`address`,`phone_number`, `email`) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $user, $address, $phone, $email);
 
-    ){
-        $sql = "INSERT INTO customer (`name`,`address`,`phone_number`, `email`) VALUES ('$user', '$address', '$phone', '$email')";
-
-        if ($conn->query($sql) === TRUE) {
-            $msg="account create successfuly!";
-            $class="success";
+        if ($stmt->execute()) {
+            $msg = "Account created successfully!";
+            $class = "success";
             header("Location: index.php");
             exit();
         } else {
-            $msg="Error: " . $sql . "<br>" . $conn->error;
-            $class="error";
-        } 
-    }   
+            $msg = "Error creating account.";
+            $class = "error";
+        }
+        $stmt->close();
+    } else {
+        $msg = "Please fill out all fields correctly.";
+        $class = "error";
+    }
+}
+
+if ($conn) {
+    $conn->close();
 }
 ?>
 <!DOCTYPE html>
@@ -87,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit">Sign up</button>
 
         <?php
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {?>
+          if ($_SERVER["REQUEST_METHOD"] == "POST" || !$conn) {?>
           <p class="<?php echo $class; ?>"><?php echo $msg; ?></p>
        <?php } ?>
 
