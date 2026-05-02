@@ -169,23 +169,34 @@ function handleCheckout() {
     return;
   }
 
-  const confirmEl = document.getElementById("order-confirmation");
-  if (confirmEl) {
-    confirmEl.textContent = `✅ Order placed! Total: ${total.toFixed(2)} DA — Thank you!`;
-    confirmEl.classList.add("visible");
-  }
+  fetch("save_order.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ cart: cart })
+  })
+  .then(res => res.json())
+  .then(data => {
 
-  // Clear cart after checkout
-  clearCart();
+    if (data.success) {
 
-  // In a real scenario, submit to save_order.php via fetch:
-  /*
-  fetch('save_order.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cart, total, customer_id: sessionCustomerId })
+      const confirmEl = document.getElementById("order-confirmation");
+      if (confirmEl) {
+        confirmEl.textContent = `✅ Order saved! Total: ${total.toFixed(2)} DA`;
+        confirmEl.classList.add("visible");
+      }
+
+      clearCart();
+
+    } else {
+      showToast("❌ " + data.error);
+    }
+
+  })
+  .catch(() => {
+    showToast("❌ Server error");
   });
-  */
 }
 
 /* ──────────────────────────────────────────────────────────
